@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Unzip source archive
         run: |
           unzip -o chest-clicker.zip -d /tmp/src
@@ -19,14 +19,20 @@ jobs:
           ls -la
           find app -maxdepth 3 -type f
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
+        with:
+          android-sdk-version: '35'
+          cmdline-tools-version: 'latest'
       - name: Build debug APK
-        run: ./gradlew :app:assembleDebug
+        env:
+          ANDROID_HOME: /opt/android-sdk
+          ANDROID_SDK_ROOT: /opt/android-sdk
+        run: ./gradlew :app:assembleDebug --no-daemon
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
